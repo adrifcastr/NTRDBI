@@ -1,3 +1,5 @@
 @echo off
-make clean
+rm -rf build
+rm -rf output
+echo Cleaned!
 pause
