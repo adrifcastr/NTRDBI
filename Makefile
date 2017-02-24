@@ -42,8 +42,8 @@ VERSION_MICRO := 1
 
 ifeq ($(TARGET),$(filter $(TARGET),3DS WIIU))
     TITLE := $(NAME)
-    DESCRIPTION := NTRDB Downloader.
-    AUTHOR := adrifcastr
+    DESCRIPTION := NTRDB Downloader
+    AUTHOR := adrifcastr & Jolty95
 endif
 
 # 3DS CONFIGURATION #
