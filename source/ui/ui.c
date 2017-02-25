@@ -615,9 +615,8 @@ void ui_draw_titledb_info(ui_view* view, void* data, float x1, float y1, float x
 
     snprintf(infoText, sizeof(infoText),
              "Title ID: %016llX\n"
-             "Size: %.2f %s",
-             info->titleId,
-             util_get_display_size(info->size), util_get_display_size_units(info->size));
+             "DEMO: TODO",
+             info->titleId);
 
     float infoWidth;
     screen_get_string_size(&infoWidth, NULL, infoText, 0.5f, 0.5f);
