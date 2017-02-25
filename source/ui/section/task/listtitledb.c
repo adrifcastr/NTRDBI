@@ -71,18 +71,14 @@ static void task_populate_titledb_thread(void* arg) {
                                         u32 nameLen = val->u.object.values[j].name_length;
                                         json_value* subVal = val->u.object.values[j].value;
                                         if(subVal->type == json_string) {
-                                            if(strncmp(name, "titleid", nameLen) == 0) {
+                                            if(strncmp(name, "TitleID", nameLen) == 0) {
                                                 titledbInfo->titleId = strtoull(subVal->u.string.ptr, NULL, 16);
                                             } else if(strncmp(name, "name", nameLen) == 0) {
                                                 strncpy(titledbInfo->meta.shortDescription, subVal->u.string.ptr, sizeof(titledbInfo->meta.shortDescription));
-                                            } else if(strncmp(name, "description", nameLen) == 0) {
+                                            } else if(strncmp(name, "desc", nameLen) == 0) {
                                                 strncpy(titledbInfo->meta.longDescription, subVal->u.string.ptr, sizeof(titledbInfo->meta.longDescription));
-                                            } else if(strncmp(name, "author", nameLen) == 0) {
+                                            } else if(strncmp(name, "developer", nameLen) == 0) {
                                                 strncpy(titledbInfo->meta.publisher, subVal->u.string.ptr, sizeof(titledbInfo->meta.publisher));
-                                            }
-                                        } else if(subVal->type == json_integer) {
-                                            if(strncmp(name, "size", nameLen) == 0) {
-                                                titledbInfo->size = (u64) subVal->u.integer;
                                             }
                                         }
                                     }
@@ -93,12 +89,7 @@ static void task_populate_titledb_thread(void* arg) {
                                         snprintf(item->name, LIST_ITEM_NAME_MAX, "%016llX", titledbInfo->titleId);
                                     }
 
-                                    AM_TitleEntry entry;
-                                    if(R_SUCCEEDED(AM_GetTitleInfo(util_get_title_destination(titledbInfo->titleId), 1, &titledbInfo->titleId, &entry))) {
-                                        item->color = COLOR_INSTALLED;
-                                    } else {
-                                        item->color = COLOR_NOT_INSTALLED;
-                                    }
+                                    item->color = COLOR_NOT_INSTALLED; //TODO
 
                                     item->data = titledbInfo;
 
