@@ -75,7 +75,8 @@ static void task_populate_titledb_thread(void* arg) {
                                                 titledbInfo->titleId = strtoull(subVal->u.string.ptr, NULL, 16);
                                             } else if(strncmp(name, "name", nameLen) == 0) {
                                                 strncpy(titledbInfo->meta.shortDescription, subVal->u.string.ptr, sizeof(titledbInfo->meta.shortDescription));
-                                            } else if(strncmp(name, "desc", nameLen) == 0) {
+                                            } else if(strncmp(name, "compatible", nameLen) == 0) {
+												//TODO: change meta_info data and clean task.h structs!
                                                 strncpy(titledbInfo->meta.longDescription, subVal->u.string.ptr, sizeof(titledbInfo->meta.longDescription));
                                             } else if(strncmp(name, "developer", nameLen) == 0) {
                                                 strncpy(titledbInfo->meta.publisher, subVal->u.string.ptr, sizeof(titledbInfo->meta.publisher));
