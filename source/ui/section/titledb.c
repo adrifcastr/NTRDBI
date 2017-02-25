@@ -13,6 +13,8 @@
 #include "../../core/screen.h"
 
 static list_item install = {"Install", COLOR_TEXT, action_install_titledb};
+static list_item description = {"Description", COLOR_TEXT, NULL}; //TODO
+static list_item info = {"More info", COLOR_TEXT, NULL}; //TODO
 
 typedef struct {
     populate_titledb_data populateData;
@@ -56,6 +58,8 @@ static void titledb_action_update(ui_view* view, void* data, linked_list* items,
 
     if(linked_list_size(items) == 0) {
         linked_list_add(items, &install);
+		linked_list_add(items, &description);
+		linked_list_add(items, &info);
     }
 }
 
