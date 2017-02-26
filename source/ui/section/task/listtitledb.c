@@ -144,7 +144,7 @@ static void task_populate_titledb_thread(void* arg) {
             u8* png = (u8*) calloc(1, maxPngSize);
             if(png != NULL) {
                 char pngUrl[128];
-                snprintf(pngUrl, sizeof(pngUrl), "http://octonezd.pw/api/images/%016llX.png", titledbInfo->titleId);
+                snprintf(pngUrl, sizeof(pngUrl), "https://raw.githubusercontent.com/adrifcastr/NTRDB-Plugin-Host/master/images/%s.png", titledbInfo->meta.shortDescription);
 
                 u32 pngSize = 0;
                 if(R_SUCCEEDED(task_populate_titledb_download(&pngSize, png, maxPngSize, pngUrl))) {
