@@ -222,8 +222,6 @@ bool task_is_quit_all();
 Handle task_get_pause_event();
 Handle task_get_suspend_event();
 
-Result task_capture_cam(capture_cam_data* data);
-
 Result task_data_op(data_op_data* data);
 
 void task_free_ext_save_data(list_item* item);
