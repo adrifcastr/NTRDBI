@@ -22,24 +22,10 @@ static list_item paste = {"Paste", COLOR_TEXT, action_paste_contents};
 
 static list_item delete_file = {"Delete", COLOR_TEXT, action_delete_file};
 
-static list_item install_cia = {"Install CIA", COLOR_TEXT, action_install_cia};
-static list_item install_and_delete_cia = {"Install and delete CIA", COLOR_TEXT, action_install_cia_delete};
-
-static list_item install_ticket = {"Install ticket", COLOR_TEXT, action_install_ticket};
-static list_item install_and_delete_ticket = {"Install and delete ticket", COLOR_TEXT, action_install_ticket_delete};
-
 static list_item delete_dir = {"Delete", COLOR_TEXT, action_delete_dir};
 static list_item copy_all_contents = {"Copy all contents", COLOR_TEXT, NULL};
 static list_item delete_all_contents = {"Delete all contents", COLOR_TEXT, action_delete_dir_contents};
 static list_item new_folder = {"New folder", COLOR_TEXT, action_new_folder};
-
-static list_item install_all_cias = {"Install all CIAs", COLOR_TEXT, action_install_cias};
-static list_item install_and_delete_all_cias = {"Install and delete all CIAs", COLOR_TEXT, action_install_cias_delete};
-static list_item delete_all_cias = {"Delete all CIAs", COLOR_TEXT, action_delete_dir_cias};
-
-static list_item install_all_tickets = {"Install all tickets", COLOR_TEXT, action_install_tickets};
-static list_item install_and_delete_all_tickets = {"Install and delete all tickets", COLOR_TEXT, action_install_tickets_delete};
-static list_item delete_all_tickets = {"Delete all tickets", COLOR_TEXT, action_delete_dir_tickets};
 
 typedef struct {
     populate_files_data populateData;
@@ -112,34 +98,14 @@ static void files_action_update(ui_view* view, void* data, linked_list* items, l
         file_info* info = (file_info*) actionData->selected->data;
 
         if(info->attributes & FS_ATTRIBUTE_DIRECTORY) {
-            if(actionData->containsCias) {
-                linked_list_add(items, &install_all_cias);
-                linked_list_add(items, &install_and_delete_all_cias);
-                linked_list_add(items, &delete_all_cias);
-            }
-
-            if(actionData->containsTickets) {
-                linked_list_add(items, &install_all_tickets);
-                linked_list_add(items, &install_and_delete_all_tickets);
-                linked_list_add(items, &delete_all_tickets);
-            }
-
+            
             linked_list_add(items, &copy_all_contents);
             linked_list_add(items, &delete_all_contents);
 
             linked_list_add(items, &new_folder);
 
             linked_list_add(items, &delete_dir);
-        } else {
-            if(info->isCia) {
-                linked_list_add(items, &install_cia);
-                linked_list_add(items, &install_and_delete_cia);
-            }
-
-            if(info->isTicket) {
-                linked_list_add(items, &install_ticket);
-                linked_list_add(items, &install_and_delete_ticket);
-            }
+        } else {           
 
             linked_list_add(items, &delete_file);
         }
