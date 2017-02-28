@@ -173,11 +173,11 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
                     json_value* json = json_parse(jsonText, size);
                     if(json != NULL) {
                         if(json->type == json_object) {
-                           
+                            
 							// Store current version
 							char currentVersion[16];
 							snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
-						
+							
 							// Create 3 char to store version
 							char major[3];
 							char minor[3];
@@ -192,8 +192,8 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 								char* name = json->u.object.values[i].name;
                                 u32 nameLen = json->u.object.values[i].name_length;
 								
-								// If they aren't json_integer, we don't need it
-								if(val->type == json_integer) {
+								// If they aren't json_string, we don't need it
+								if(val->type == json_string) {
 									if(strncmp(name, "latest_mayor", nameLen) == 0) {
 										// Found latest major										
 										strncpy(major, val->u.string.ptr, sizeof(major));
@@ -210,7 +210,7 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 							// Store latest version
 							char latestVersion[16];
 							snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", major, minor, micro);
-							
+														
 							// Check if current version is the latest
 							if(strncmp(currentVersion, latestVersion, sizeof(currentVersion) != 0)){
 								
@@ -221,7 +221,8 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 								//} else {
 								//	res = R_FBI_BAD_DATA;
 								//}
-							}
+							}							
+							
                         } else {
                             res = R_FBI_BAD_DATA;
                         }
