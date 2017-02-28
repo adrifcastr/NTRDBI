@@ -163,7 +163,7 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
     u32 responseCode = 0;
 
     httpcContext context;
-    if(R_SUCCEEDED(res = util_http_open(&context, &responseCode, "https://api.github.com/repos/adrifcastr/NTI/releases/latest", true))) {
+    if(R_SUCCEEDED(res = util_http_open(&context, &responseCode, "https://raw.githubusercontent.com/adrifcastr/NTRDB-Plugin-Host/NTRDBI-Update-Server/update.json", true))) {
         u32 size = 0;
         if(R_SUCCEEDED(res = util_http_get_size(&context, &size))) {
             char* jsonText = (char*) calloc(sizeof(char), size);
@@ -173,59 +173,55 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
                     json_value* json = json_parse(jsonText, size);
                     if(json != NULL) {
                         if(json->type == json_object) {
-                            json_value* name = NULL;
-                            json_value* assets = NULL;
-
-                            for(u32 i = 0; i < json->u.object.length; i++) {
+                           
+							// Store current version
+							char currentVersion[16];
+							snprintf(currentVersion, sizeof(currentVersion), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
+						
+							// Create 3 char to store version
+							char major[3];
+							char minor[3];
+							char micro[3];
+							
+							// Read all the json to find major, minor and micro version
+							for(u32 i = 0; i < json->u.object.length; i++) {
+								// Create a json_value pointer that will be the value read from the json
                                 json_value* val = json->u.object.values[i].value;
-                                if(strncmp(json->u.object.values[i].name, "name", json->u.object.values[i].name_length) == 0 && val->type == json_string) {
-                                    name = val;
-                                } else if(strncmp(json->u.object.values[i].name, "assets", json->u.object.values[i].name_length) == 0 && val->type == json_array) {
-                                    assets = val;
-                                }
-                            }
-
-                            if(name != NULL && assets != NULL) {
-                                char versionString[16];
-                                snprintf(versionString, sizeof(versionString), "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
-
-                                if(strncmp(name->u.string.ptr, versionString, name->u.string.length) != 0) {
-                                    char* url = NULL;
-
-                                    for(u32 i = 0; i < assets->u.array.length; i++) {
-                                        json_value* val = assets->u.array.values[i];
-                                        if(val->type == json_object) {
-                                            json_value* assetName = NULL;
-                                            json_value* assetUrl = NULL;
-
-                                            for(u32 j = 0; j < val->u.object.length; j++) {
-                                                json_value* subVal = val->u.object.values[j].value;
-                                                if(strncmp(val->u.object.values[j].name, "name", val->u.object.values[j].name_length) == 0 && subVal->type == json_string) {
-                                                    assetName = subVal;
-                                                } else if(strncmp(val->u.object.values[j].name, "browser_download_url", val->u.object.values[j].name_length) == 0 && subVal->type == json_string) {
-                                                    assetUrl = subVal;
-                                                }
-                                            }
-
-                                            if(assetName != NULL && assetUrl != NULL) {
-                                                if(strncmp(assetName->u.string.ptr, util_get_3dsx_path() != NULL ? "FBI.3dsx" : "FBI.cia", assetName->u.string.length) == 0) {
-                                                    url = assetUrl->u.string.ptr;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if(url != NULL) {
-                                        strncpy(updateData->url, url, URL_MAX);
-                                        hasUpdate = true;
-                                    } else {
-                                        res = R_FBI_BAD_DATA;
-                                    }
-                                }
-                            } else {
-                                res = R_FBI_BAD_DATA;
-                            }
+								
+								// Create two variables that will store the values and it size
+								char* name = json->u.object.values[i].name;
+                                u32 nameLen = json->u.object.values[i].name_length;
+								
+								// If they aren't json_integer, we don't need it
+								if(val->type == json_integer) {
+									if(strncmp(name, "latest_mayor", nameLen) == 0) {
+										// Found latest major										
+										strncpy(major, val->u.string.ptr, sizeof(major));
+									} else if(strncmp(name, "latest_mayor", nameLen) == 0) {
+										// Read latest minor
+										strncpy(minor, val->u.string.ptr, sizeof(minor));
+									} else if(strncmp(name, "latest_mayor", nameLen) == 0) {
+										// Read latest micro
+										strncpy(micro, val->u.string.ptr, sizeof(micro));
+									}
+								}
+							}
+														
+							// Store latest version
+							char latestVersion[16];
+							snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", major, minor, micro);
+							
+							// Check if current version is the latest
+							if(strncmp(currentVersion, latestVersion, sizeof(currentVersion) != 0)){
+								
+								//char* url = NULL;
+								//if(url != NULL) {
+									//strncpy(updateData->url, url, URL_MAX);
+									hasUpdate = true;
+								//} else {
+								//	res = R_FBI_BAD_DATA;
+								//}
+							}
                         } else {
                             res = R_FBI_BAD_DATA;
                         }
