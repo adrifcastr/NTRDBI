@@ -74,6 +74,7 @@ typedef struct file_info_s {
 typedef struct titledb_info_s {
     u64 titleId;
     meta_info meta;
+	char downloadURL[0x100];
 } titledb_info;
 
 typedef struct capture_cam_data_s {
@@ -119,10 +120,10 @@ typedef struct data_op_data_s {
     Result (*getSrcSize)(void* data, u32 handle, u64* size);
     Result (*readSrc)(void* data, u32 handle, u32* bytesRead, void* buffer, u64 offset, u32 size);
 
-    Result (*openDst)(void* data, u32 index, void* initialReadBlock, u64 size, u32* handle);
-    Result (*closeDst)(void* data, u32 index, bool succeeded, u32 handle);
+    Result (*openFile)(void* data, u32 index, void* initialReadBlock, u64 size, u32* handle);
+    Result (*closeFile)(void* data, u32 index, bool succeeded, u32 handle);
 
-    Result (*writeDst)(void* data, u32 handle, u32* bytesWritten, void* buffer, u64 offset, u32 size);
+    Result (*writeFile)(void* data, u32 handle, u32* bytesWritten, void* buffer, u64 offset, u32 size);
 
     Result (*suspendCopy)(void* data, u32 index, u32* srcHandle, u32* dstHandle);
     Result (*restoreCopy)(void* data, u32 index, u32* srcHandle, u32* dstHandle);

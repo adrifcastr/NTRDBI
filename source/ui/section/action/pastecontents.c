@@ -382,9 +382,9 @@ void action_paste_contents(linked_list* items, list_item* selected) {
     data->pasteInfo.getSrcSize = action_paste_contents_get_src_size;
     data->pasteInfo.readSrc = action_paste_contents_read_src;
 
-    data->pasteInfo.openDst = action_paste_contents_open_dst;
-    data->pasteInfo.closeDst = action_paste_contents_close_dst;
-    data->pasteInfo.writeDst = action_paste_contents_write_dst;
+    data->pasteInfo.openFile = action_paste_contents_open_dst;
+    data->pasteInfo.closeFile = action_paste_contents_close_dst;
+    data->pasteInfo.writeFile = action_paste_contents_write_dst;
 
     data->pasteInfo.suspendCopy = action_paste_contents_suspend_copy;
     data->pasteInfo.restoreCopy = action_paste_contents_restore_copy;

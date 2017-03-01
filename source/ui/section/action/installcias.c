@@ -153,24 +153,7 @@ static Result action_install_cias_open_dst(void* data, u32 index, void* initialR
 }
 
 static Result action_install_cias_close_dst(void* data, u32 index, bool succeeded, u32 handle) {
-    if(succeeded) {
-        install_cias_data* installData = (install_cias_data*) data;
-
-        file_info* info = (file_info*) ((list_item*) linked_list_get(&installData->contents, index))->data;
-
-        Result res = 0;
-        if(R_SUCCEEDED(res = AM_FinishCiaInstall(handle))) {
-            util_import_seed(NULL, info->ciaInfo.titleId);
-
-            if((info->ciaInfo.titleId & 0xFFFFFFF) == 0x0000002) {
-                res = AM_InstallFirm(info->ciaInfo.titleId);
-            }
-        }
-
-        return res;
-    } else {
-        return AM_CancelCIAInstall(handle);
-    }
+	return succeeded ? AM_FinishCiaInstall(handle) : AM_CancelCIAInstall(handle);
 }
 
 static Result action_install_cias_write_dst(void* data, u32 handle, u32* bytesWritten, void* buffer, u64 offset, u32 size) {
@@ -348,9 +331,9 @@ static void action_install_cias_internal(linked_list* items, list_item* selected
     data->installInfo.getSrcSize = action_install_cias_get_src_size;
     data->installInfo.readSrc = action_install_cias_read_src;
 
-    data->installInfo.openDst = action_install_cias_open_dst;
-    data->installInfo.closeDst = action_install_cias_close_dst;
-    data->installInfo.writeDst = action_install_cias_write_dst;
+    data->installInfo.openFile = action_install_cias_open_dst;
+    data->installInfo.closeFile = action_install_cias_close_dst;
+    data->installInfo.writeFile = action_install_cias_write_dst;
 
     data->installInfo.suspendCopy = action_install_cias_suspend_copy;
     data->installInfo.restoreCopy = action_install_cias_restore_copy;

@@ -57,8 +57,8 @@ static Result task_data_op_copy(data_op_data* data, u32 index) {
                 if(data->currTotal == 0) {
                     if(data->copyEmpty) {
                         u32 dstHandle = 0;
-                        if(R_SUCCEEDED(res = data->openDst(data->data, index, NULL, data->currTotal, &dstHandle))) {
-                            res = data->closeDst(data->data, index, true, dstHandle);
+                        if(R_SUCCEEDED(res = data->openFile(data->data, index, NULL, data->currTotal, &dstHandle))) {
+                            res = data->closeFile(data->data, index, true, dstHandle);
                         }
                     } else {
                         res = R_FBI_BAD_DATA;
@@ -85,13 +85,13 @@ static Result task_data_op_copy(data_op_data* data, u32 index) {
                             if(firstRun) {
                                 firstRun = false;
 
-                                if(R_FAILED(res = data->openDst(data->data, index, buffer, data->currTotal, &dstHandle))) {
+                                if(R_FAILED(res = data->openFile(data->data, index, buffer, data->currTotal, &dstHandle))) {
                                     break;
                                 }
                             }
 
                             u32 bytesWritten = 0;
-                            if(R_FAILED(res = data->writeDst(data->data, dstHandle, &bytesWritten, buffer, data->currProcessed, bytesRead))) {
+                            if(R_FAILED(res = data->writeFile(data->data, dstHandle, &bytesWritten, buffer, data->currProcessed, bytesRead))) {
                                 break;
                             }
 
@@ -109,7 +109,7 @@ static Result task_data_op_copy(data_op_data* data, u32 index) {
                         }
 
                         if(dstHandle != 0) {
-                            Result closeDstRes = data->closeDst(data->data, index, res == 0, dstHandle);
+                            Result closeDstRes = data->closeFile(data->data, index, res == 0, dstHandle);
                             if(R_SUCCEEDED(res)) {
                                 res = closeDstRes;
                             }

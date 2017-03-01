@@ -53,8 +53,6 @@ void util_get_parent_path(char* out, const char* path, u32 size);
 
 bool util_is_string_empty(const char* str);
 
-Result util_import_seed(u32* responseCode, u64 titleId);
-
 FS_MediaType util_get_title_destination(u64 titleId);
 
 u64 util_get_cia_title_id(u8* cia);

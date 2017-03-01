@@ -24,7 +24,6 @@ typedef struct {
     linked_list contents;
 
     bool delete;
-    bool cdn;
 
     data_op_data installInfo;
 } install_tickets_data;
@@ -116,23 +115,7 @@ static Result action_install_tickets_open_dst(void* data, u32 index, void* initi
 }
 
 static Result action_install_tickets_close_dst(void* data, u32 index, bool succeeded, u32 handle) {
-    install_tickets_data* installData = (install_tickets_data*) data;
-
-    if(succeeded) {
-        Result res = AM_InstallTicketFinish(handle);
-        if(R_SUCCEEDED(res) && installData->cdn) {
-            volatile bool done = false;
-            action_install_cdn_noprompt(&done, &((file_info*) ((list_item*) linked_list_get(&installData->contents, index))->data)->ticketInfo, false);
-
-            while(!done) {
-                svcSleepThread(100000000);
-            }
-        }
-
-        return res;
-    } else {
-        return AM_InstallTicketAbort(handle);
-    }
+	return succeeded ? AM_InstallTicketFinish(handle) : AM_InstallTicketAbort(handle);
 }
 
 static Result action_install_tickets_write_dst(void* data, u32 handle, u32* bytesWritten, void* buffer, u64 offset, u32 size) {
@@ -184,57 +167,6 @@ static void action_install_tickets_free_data(install_tickets_data* data) {
     free(data);
 }
 
-static void action_install_tickets_update(ui_view* view, void* data, float* progress, char* text) {
-    install_tickets_data* installData = (install_tickets_data*) data;
-
-    if(installData->installInfo.finished) {
-        if(installData->delete) {
-            FSUSER_ControlArchive(installData->target->archive, ARCHIVE_ACTION_COMMIT_SAVE_DATA, NULL, 0, NULL, 0);
-        }
-
-        ui_pop();
-        info_destroy(view);
-
-        if(R_SUCCEEDED(installData->installInfo.result)) {
-            prompt_display("Success", "Install finished.", COLOR_TEXT, false, NULL, NULL, NULL);
-        }
-
-        action_install_tickets_free_data(installData);
-
-        return;
-    }
-
-    if((hidKeysDown() & KEY_B) && !installData->installInfo.finished) {
-        svcSignalEvent(installData->installInfo.cancelEvent);
-    }
-
-    *progress = installData->installInfo.currTotal != 0 ? (float) ((double) installData->installInfo.currProcessed / (double) installData->installInfo.currTotal) : 0;
-    snprintf(text, PROGRESS_TEXT_MAX, "%lu / %lu\n%.2f %s / %.2f %s\n%.2f %s/s", installData->installInfo.processed, installData->installInfo.total, util_get_display_size(installData->installInfo.currProcessed), util_get_display_size_units(installData->installInfo.currProcessed), util_get_display_size(installData->installInfo.currTotal), util_get_display_size_units(installData->installInfo.currTotal), util_get_display_size(installData->installInfo.copyBytesPerSecond), util_get_display_size_units(installData->installInfo.copyBytesPerSecond));
-}
-
-static void action_install_tickets_cdn_check_onresponse(ui_view* view, void* data, bool response) {
-    install_tickets_data* installData = (install_tickets_data*) data;
-
-    installData->cdn = response;
-
-    Result res = task_data_op(&installData->installInfo);
-    if(R_SUCCEEDED(res)) {
-        info_display("Installing ticket(s)", "Press B to cancel.", true, data, action_install_tickets_update, action_install_tickets_draw_top);
-    } else {
-        error_display_res(NULL, NULL, res, "Failed to initiate ticket installation.");
-
-        action_install_tickets_free_data(installData);
-    }
-}
-
-static void action_install_tickets_onresponse(ui_view* view, void* data, bool response) {
-    if(response) {
-        prompt_display("Optional", "Install ticket titles from CDN?", COLOR_TEXT, true, data, action_install_tickets_draw_top, action_install_tickets_cdn_check_onresponse);
-    } else {
-        action_install_tickets_free_data((install_tickets_data*) data);
-    }
-}
-
 typedef struct {
     install_tickets_data* installData;
 
@@ -245,6 +177,10 @@ typedef struct {
 
 static void action_install_tickets_loading_draw_top(ui_view* view, void* data, float x1, float y1, float x2, float y2) {
     action_install_tickets_draw_top(view, ((install_tickets_loading_data*) data)->installData, x1, y1, x2, y2);
+}
+
+static void action_install_tickets_onresponse(ui_view* view, void* data, bool response) {
+   action_install_tickets_free_data((install_tickets_data*) data);
 }
 
 static void action_install_tickets_loading_update(ui_view* view, void* data, float* progress, char* text)  {
@@ -314,9 +250,9 @@ static void action_install_tickets_internal(linked_list* items, list_item* selec
     data->installInfo.getSrcSize = action_install_tickets_get_src_size;
     data->installInfo.readSrc = action_install_tickets_read_src;
 
-    data->installInfo.openDst = action_install_tickets_open_dst;
-    data->installInfo.closeDst = action_install_tickets_close_dst;
-    data->installInfo.writeDst = action_install_tickets_write_dst;
+    data->installInfo.openFile = action_install_tickets_open_dst;
+    data->installInfo.closeFile = action_install_tickets_close_dst;
+    data->installInfo.writeFile = action_install_tickets_write_dst;
 
     data->installInfo.suspendCopy = action_install_tickets_suspend_copy;
     data->installInfo.restoreCopy = action_install_tickets_restore_copy;

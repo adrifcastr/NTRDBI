@@ -7,8 +7,8 @@
 #include "../../list.h"
 
 void action_install_titledb(linked_list* items, list_item* selected) {
-    char url[128];
-    snprintf(url, sizeof(url), "http://ntrdb.octonezd.pw/api/proxy/%016llX", ((titledb_info*) selected->data)->titleId);
-
+    char url[0x100];
+    snprintf(url, sizeof(url), "%s", ((titledb_info*) selected->data)->downloadURL);
+	
     action_url_install("Install the selected title from NTRDB?", url, NULL, NULL);
 }

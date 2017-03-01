@@ -306,9 +306,9 @@ void update_open() {
 	data->installInfo.getSrcSize = update_get_src_size;
 	data->installInfo.readSrc = update_read_src;
 
-	data->installInfo.openDst = update_open_dst;
-	data->installInfo.closeDst = update_close_dst;
-	data->installInfo.writeDst = update_write_dst;
+	data->installInfo.openFile = update_open_dst;
+	data->installInfo.closeFile = update_close_dst;
+	data->installInfo.writeFile = update_write_dst;
 
 	data->installInfo.suspendCopy = update_suspend_copy;
 	data->installInfo.restoreCopy = update_restore_copy;
