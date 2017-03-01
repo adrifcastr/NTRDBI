@@ -122,7 +122,7 @@ static bool update_error(void* data, u32 index, Result res) {
     if(res == R_FBI_CANCELLED) {
         prompt_display("Failure", "Install cancelled.", COLOR_TEXT, false, NULL, NULL, NULL);
     } else if(res == R_FBI_HTTP_RESPONSE_CODE) {
-        error_display(NULL, NULL, "Failed to update NTI.\nHTTP server returned response code %d", updateData->responseCode);
+        error_display(NULL, NULL, "Failed to update NTRDBI.\nHTTP server returned response code %d", updateData->responseCode);
     } else {
         error_display_res(NULL, NULL, res, "Failed to update NTI.");
     }
@@ -194,13 +194,13 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 								
 								// If they aren't json_string, we don't need it
 								if(val->type == json_string) {
-									if(strncmp(name, "latest_mayor", nameLen) == 0) {
+									if(strncmp(name, "latest_major", nameLen) == 0) {
 										// Found latest major										
 										strncpy(major, val->u.string.ptr, sizeof(major));
-									} else if(strncmp(name, "latest_mayor", nameLen) == 0) {
+									} else if(strncmp(name, "latest_minor", nameLen) == 0) {
 										// Read latest minor
 										strncpy(minor, val->u.string.ptr, sizeof(minor));
-									} else if(strncmp(name, "latest_mayor", nameLen) == 0) {
+									} else if(strncmp(name, "latest_micro", nameLen) == 0) {
 										// Read latest micro
 										strncpy(micro, val->u.string.ptr, sizeof(micro));
 									}
@@ -210,18 +210,35 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 							// Store latest version
 							char latestVersion[16];
 							snprintf(latestVersion, sizeof(latestVersion), "%s.%s.%s", major, minor, micro);
-														
+							
 							// Check if current version is the latest
-							if(strncmp(currentVersion, latestVersion, sizeof(currentVersion) != 0)){
+							if(strncmp(currentVersion, latestVersion, sizeof(currentVersion)) != 0) {								
+								char* url = NULL;
 								
-								//char* url = NULL;
-								//if(url != NULL) {
-									//strncpy(updateData->url, url, URL_MAX);
-									hasUpdate = true;
-								//} else {
-								//	res = R_FBI_BAD_DATA;
-								//}
-							}							
+								for(u32 i = 0; i < json->u.object.length; i++) {
+									// Create a json_value pointer that will find the download URL
+									json_value* val = json->u.object.values[i].value;
+									
+									// Create two variables that will store the values and it size
+									char* name = json->u.object.values[i].name;
+									u32 nameLen = json->u.object.values[i].name_length;
+									
+									// If they aren't json_string, we don't need it
+									if(val->type == json_string) {
+										if(strncmp(name, "update_url", nameLen) == 0) {
+											// Found update url!									
+											strncpy(url, val->u.string.ptr, sizeof(major));
+											break;
+										}
+									}
+								}
+								if(url != NULL) {
+									strncpy(updateData->url, url, URL_MAX);
+									hasUpdate = true;							
+								} else {
+									res = R_FBI_BAD_DATA;
+								}
+							}
 							
                         } else {
                             res = R_FBI_BAD_DATA;
@@ -248,7 +265,7 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 
     if(hasUpdate) {
         if(R_SUCCEEDED(res = task_data_op(&updateData->installInfo))) {
-            info_display("Updating NTI", "Press B to cancel.", true, data, update_install_update, NULL);
+            info_display("Updating NTRDBI", "Press B to cancel.", true, data, update_install_update, NULL);
         } else {
             error_display_res(NULL, NULL, res, "Failed to begin update.");
         }
@@ -316,5 +333,5 @@ void update_open() {
 
     data->installInfo.finished = true;
 
-    prompt_display("Confirmation", "Check for NTI updates?", COLOR_TEXT, true, data, NULL, update_onresponse);
+    prompt_display("Confirmation", "Check for NTRDBI updates?", COLOR_TEXT, true, data, NULL, update_onresponse);
 }
