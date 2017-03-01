@@ -552,12 +552,13 @@ void ui_draw_titledb_info(ui_view* view, void* data, float x1, float y1, float x
 
     ui_draw_meta_info(view, &info->meta, x1, y1, x2, y2);
 
-    char infoText[512];
+    char infoText[0x80];
 
     snprintf(infoText, sizeof(infoText),
              "Title ID: %016llX\n"
-             "DEMO: TODO",
-             info->titleId);
+             "Version: %s",
+             info->titleId,
+			 info->meta.version);
 
     float infoWidth;
     screen_get_string_size(&infoWidth, NULL, infoText, 0.5f, 0.5f);

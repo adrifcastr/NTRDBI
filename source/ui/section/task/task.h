@@ -12,6 +12,7 @@ typedef struct meta_info_s {
     char publisher[0x100];
     u32 region;
     u32 texture;
+	char version[0xA];
 } meta_info;
 
 typedef struct title_info_s {
@@ -72,7 +73,6 @@ typedef struct file_info_s {
 
 typedef struct titledb_info_s {
     u64 titleId;
-    u64 size;
     meta_info meta;
 } titledb_info;
 
