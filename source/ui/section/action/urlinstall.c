@@ -170,7 +170,7 @@ static void action_url_install_confirm_onresponse(ui_view* view, void* data, boo
 }
 
 void action_url_install(const char* confirmMessage, const char* urls, void* finishedData, void (*finished)(void* data)) {
-	/** This method will be used to download the .plg and store in the desired location. **/
+	
 	
     url_install_data* data = (url_install_data*) calloc(1, sizeof(url_install_data));
     if(data == NULL) {

@@ -82,6 +82,8 @@ static void task_populate_titledb_thread(void* arg) {
                                                 strncpy(titledbInfo->meta.publisher, subVal->u.string.ptr, sizeof(titledbInfo->meta.publisher));
                                             } else if(strncmp(name, "version", nameLen) == 0) {
                                                 strncpy(titledbInfo->meta.version, subVal->u.string.ptr, sizeof(titledbInfo->meta.version));
+											} else if(strncmp(name, "plg", nameLen) == 0) {
+                                                strncpy(titledbInfo->downloadURL, subVal->u.string.ptr, sizeof(titledbInfo->downloadURL));
 											}
                                         }
                                     }
