@@ -183,6 +183,9 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 							char minor[3];
 							char micro[3];
 							
+							// Create a pointer to store the CIA URL
+							char* url = NULL;
+							
 							// Read all the json to find major, minor and micro version
 							for(u32 i = 0; i < json->u.object.length; i++) {
 								// Create a json_value pointer that will be the value read from the json
@@ -192,7 +195,7 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 								char* name = json->u.object.values[i].name;
 								u32 nameLen = json->u.object.values[i].name_length;
 								
-								// If they aren't json_string, we don't need it
+								// If they aren't json_string, we don't need them
 								if(val->type == json_string) {
 									if(strncmp(name, "latest_major", nameLen) == 0) {
 										// Found latest major										
@@ -203,6 +206,9 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 									} else if(strncmp(name, "latest_micro", nameLen) == 0) {
 										// Read latest micro
 										strncpy(micro, val->u.string.ptr, sizeof(micro));
+									} else if(strncmp(name, "update_url", nameLen) == 0) {
+										// Found update url!									
+										url = val->u.string.ptr;
 									}
 								}
 							}
@@ -213,25 +219,6 @@ static void update_check_update(ui_view* view, void* data, float* progress, char
 							
 							// Check if current version is the latest
 							if(strncmp(currentVersion, latestVersion, sizeof(currentVersion)) != 0) {								
-								char* url = NULL;
-								
-								for(u32 i = 0; i < json->u.object.length; i++) {
-									// Create a json_value pointer that will find the download URL
-									json_value* val = json->u.object.values[i].value;
-									
-									// Create two variables that will store the values and it size
-									char* name = json->u.object.values[i].name;
-									u32 nameLen = json->u.object.values[i].name_length;
-									
-									// If they aren't json_string, we don't need it
-									if(val->type == json_string) {
-										if(strncmp(name, "update_url", nameLen) == 0) {
-											// Found update url!									
-											strncpy(url, val->u.string.ptr, sizeof(major));
-											break;
-										}
-									}
-								}
 								if(url != NULL) {
 									strncpy(updateData->url, url, URL_MAX);
 									hasUpdate = true;							
