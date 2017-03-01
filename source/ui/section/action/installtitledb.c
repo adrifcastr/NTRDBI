@@ -25,7 +25,7 @@ void action_install_titledb(linked_list* items, list_item* selected) {
 
 void downloadPlugin(const char* text, const char* url, list_item* selected) {
 	/** This method will be used to download the .plg and store in the desired location. **/
-	
+
 	// Read the plugin data first.
 	titledb_info* titledbInfo = (titledb_info*) selected->data;
 
@@ -40,27 +40,27 @@ void downloadPlugin(const char* text, const char* url, list_item* selected) {
 	snprintf(dir, sizeof(dir), "sdmc:/plugin/%s", titleID_s);
 	dir[49] = '\0';
 	mkdir(dir, 0777);
-	fsExit();	
-	
+	fsExit();
+
 	// DownloadFile wants file to be "/plugins/TID/name"
 	char tmp[0x100];
 	snprintf(tmp, sizeof(tmp), "/plugins/%s/%s", titleID_s, titledbInfo->meta.shortDescription);
-	
+
 	// Store
 	strncpy(file, tmp, sizeof(titleID));
 	strncpy(pluginURL, url, sizeof(pluginURL));
 	file[255] = '\0';
-	
+
 	// Show the confirmation text
 	prompt_display("Confirmation", text, COLOR_TEXT, true, (titledb_info*) selected->data, NULL, downloadPlugin_confirmed);
 }
 
 void downloadPlugin_confirmed(ui_view* view, void* data, bool response) {
-   info_display("Downloading plugin", "Press B to cancel.", false, data, startDownload, NULL); 
+   info_display("Downloading plugin", "Press B to cancel.", false, data, startDownload, NULL);
 }
 
 void startDownload(ui_view* view, void* data, float* progress, char* text){
-	
+
 	char* downloadURL = pluginURL;
 	fsInit();
 	httpcInit(0x1000);
@@ -119,7 +119,7 @@ void startDownload(ui_view* view, void* data, float* progress, char* text){
 
 					FSFILE_Close(fileHandle);
 					svcCloseHandle(fileHandle);
-					
+
 					free(buf);
 				}
 			}else{

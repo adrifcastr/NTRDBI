@@ -14,18 +14,8 @@
 #include "../../core/screen.h"
 #include "../../core/util.h"
 
-static list_item launch_title = {"Launch Title", COLOR_TEXT, action_launch_title};
 static list_item delete_title = {"Delete Title", COLOR_TEXT, action_delete_title};
 static list_item delete_title_ticket = {"Delete Title And Ticket", COLOR_TEXT, action_delete_title_ticket};
-static list_item extract_smdh = {"Extract SMDH", COLOR_TEXT, action_extract_smdh};
-static list_item import_seed = {"Import Seed", COLOR_TEXT, action_import_seed};
-static list_item browse_save_data = {"Browse Save Data", COLOR_TEXT, action_browse_title_save_data};
-static list_item import_save_data = {"Import Save Data", COLOR_TEXT, action_import_twl_save};
-static list_item export_save_data = {"Export Save Data", COLOR_TEXT, action_export_twl_save};
-static list_item erase_save_data = {"Erase Save Data", COLOR_TEXT, action_erase_twl_save};
-static list_item import_secure_value = {"Import Secure Value", COLOR_TEXT, action_import_secure_value};
-static list_item export_secure_value = {"Export Secure Value", COLOR_TEXT, action_export_secure_value};
-static list_item delete_secure_value = {"Delete Secure Value", COLOR_TEXT, action_delete_secure_value};
 
 typedef struct {
     populate_titles_data populateData;
@@ -72,37 +62,15 @@ static void titles_action_update(ui_view* view, void* data, linked_list* items, 
         return;
     }
 
-    if(linked_list_size(items) == 0) {
-        linked_list_add(items, &launch_title);
 
         title_info* info = (title_info*) actionData->selected->data;
 
         if(info->mediaType != MEDIATYPE_GAME_CARD) {
             linked_list_add(items, &delete_title);
             linked_list_add(items, &delete_title_ticket);
-        }
 
-        if(!info->twl) {
-            linked_list_add(items, &extract_smdh);
-
-            if(info->mediaType != MEDIATYPE_GAME_CARD) {
-                linked_list_add(items, &import_seed);
-            }
-
-            linked_list_add(items, &browse_save_data);
-
-            if(info->mediaType != MEDIATYPE_GAME_CARD) {
-                linked_list_add(items, &import_secure_value);
-                linked_list_add(items, &export_secure_value);
-                linked_list_add(items, &delete_secure_value);
-            }
-        } else if(info->mediaType == MEDIATYPE_GAME_CARD) {
-            linked_list_add(items, &import_save_data);
-            linked_list_add(items, &export_save_data);
-            linked_list_add(items, &erase_save_data);
         }
     }
-}
 
 static void titles_action_open(linked_list* items, list_item* selected) {
     titles_action_data* data = (titles_action_data*) calloc(1, sizeof(titles_action_data));
