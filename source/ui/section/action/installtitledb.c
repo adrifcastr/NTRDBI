@@ -31,10 +31,10 @@ void downloadPlugin(const char* text, const char* url, list_item* selected) {
 
 	// Create the folder for plugin.
 	u64 titleID = titledbInfo->titleId;
-	char titleID_s[17];
-
-	snprintf(titleID_s, sizeof(titleID_s), "%016llX", titleID);
-	titleID_s[16] = '\0';
+	char titleID_s[] = {"0123456789ABCDEF"}; // dummy titleID. TODO check if this titleID folder is generated. if true, there is an error!
+	memcpy(titleID_s, &titleID, 8);
+	
+	// if dir already exist, mkdir won't do anything
 	fsInit();
 	char dir[50];
 	snprintf(dir, sizeof(dir), "sdmc:/plugin/%s", titleID_s);
@@ -42,6 +42,8 @@ void downloadPlugin(const char* text, const char* url, list_item* selected) {
 	mkdir(dir, 0777);
 	fsExit();
 
+
+	
 	// DownloadFile wants file to be "/plugins/TID/name"
 	char tmp[0x100];
 	snprintf(tmp, sizeof(tmp), "/plugins/%s/%s", titleID_s, titledbInfo->meta.shortDescription);
