@@ -11,55 +11,8 @@
 #include "ui/ui.h"
 #include "ui/section/task/task.h"
 
-#define CURRENT_KPROCESS (*(void**) 0xFFFF9004)
 
-#define KPROCESS_PID_OFFSET_OLD (0xB4)
-#define KPROCESS_PID_OFFSET_NEW (0xBC)
 
-static bool backdoor_ran = false;
-static bool n3ds = false;
-static u32 old_pid = 0;
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreturn-type"
-static __attribute__((naked)) Result svcGlobalBackdoor(s32 (*callback)()) {
-    asm volatile(
-            "svc 0x30\n"
-            "bx lr"
-    );
-}
-#pragma GCC diagnostic pop
-
-static s32 patch_pid_kernel() {
-    u32 *pidPtr = (u32*) (CURRENT_KPROCESS + (n3ds ? KPROCESS_PID_OFFSET_NEW : KPROCESS_PID_OFFSET_OLD));
-
-    old_pid = *pidPtr;
-    *pidPtr = 0;
-
-    backdoor_ran = true;
-    return 0;
-}
-
-static s32 restore_pid_kernel() {
-    u32 *pidPtr = (u32*) (CURRENT_KPROCESS + (n3ds ? KPROCESS_PID_OFFSET_NEW : KPROCESS_PID_OFFSET_OLD));
-
-    *pidPtr = old_pid;
-
-    backdoor_ran = true;
-    return 0;
-}
-
-static bool attempt_patch_pid() {
-    backdoor_ran = false;
-    APT_CheckNew3DS(&n3ds);
-
-    svcGlobalBackdoor(patch_pid_kernel);
-    srvExit();
-    srvInit();
-    svcGlobalBackdoor(restore_pid_kernel);
-
-    return backdoor_ran;
-}
 
 static void (*exit_funcs[16])()= {NULL};
 static u32 exit_func_count = 0;
@@ -124,10 +77,6 @@ void init() {
     }
 
     if(R_FAILED(init_services())) {
-        if(!attempt_patch_pid()) {
-            util_panic("Kernel backdoor not installed.\nPlease run a kernel exploit and try again.");
-            return;
-        }
 
         Result initRes = init_services();
         if(R_FAILED(initRes)) {
