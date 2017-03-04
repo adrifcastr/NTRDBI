@@ -32,7 +32,7 @@ void downloadPlugin(const char* text, const char* url, list_item* selected) {
 	// Create the folder for plugin.
 	u64 titleID = titledbInfo->titleId;
 	char titleID_s[] = {"0123456789ABCDEF"}; // dummy titleID. TODO check if this titleID folder is generated. if true, there is an error!
-	memcpy(titleID_s, &titleID, 8);
+	snprintf(titleID_s, sizeof(titleID_s), "%016llX", titleID);
 	
 	// if dir already exist, mkdir won't do anything
 	fsInit();
@@ -41,22 +41,102 @@ void downloadPlugin(const char* text, const char* url, list_item* selected) {
 	dir[49] = '\0';
 	mkdir(dir, 0777);
 	fsExit();
-
-
 	
 	// DownloadFile wants file to be "/plugins/TID/name"
 	char tmp[0x100];
+	//snprintf(tmp, sizeof(tmp), "/plugins/%s/%s", titleID_s, titledbInfo->meta.shortDescription);
 	snprintf(tmp, sizeof(tmp), "/plugins/%s/%s", titleID_s, titledbInfo->meta.shortDescription);
 
 	// Store
-	strncpy(file, tmp, sizeof(titleID));
-	strncpy(pluginURL, url, sizeof(pluginURL));
-	file[255] = '\0';
+	///strncpy(file, tmp, sizeof(titleID));
+	///strncpy(pluginURL, url, sizeof(pluginURL));
+	///file[255] = '\0';
 
-	// Show the confirmation text
-	prompt_display("Confirmation", text, COLOR_TEXT, true, (titledb_info*) selected->data, NULL, downloadPlugin_confirmed);
+	// Download: TODO fix the code above this to make all UI WORKS!!. This is a TEMP solution!
+	
+	char* downloadURL = strdup(url);
+	//fsInit();
+	httpcInit(0x1000);
+	httpcContext context;
+	u32 statuscode=0;
+	HTTPC_RequestMethod useMethod = HTTPC_METHOD_GET;
+
+	do {
+		if (statuscode >= 301 && statuscode <= 308) {
+			char newurl[4096];
+			httpcGetResponseHeader(&context, (char*)"Location", &newurl[0], 4096);
+			downloadURL = &newurl[0];
+			httpcCloseContext(&context);
+		}
+
+		Result ret = httpcOpenContext(&context, useMethod, downloadURL, 0);
+		httpcSetSSLOpt(&context, SSLCOPT_DisableVerify);
+
+		if (ret==0) {
+			if(R_SUCCEEDED(httpcBeginRequest(&context))){
+				u32 contentsize=0;
+				if(R_FAILED(httpcGetResponseStatusCode(&context, &statuscode))){
+					httpcCloseContext(&context);
+					httpcExit();
+					fsExit();
+					return;
+				}
+				if (statuscode == 200) {
+					u32 readSize = 0;
+					long int bytesWritten = 0;
+
+					Handle fileHandle;
+					FS_Path filePath=fsMakePath(PATH_ASCII, tmp); // <- temp solution
+					FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
+
+					if(R_FAILED(httpcGetDownloadSizeState(&context, NULL, &contentsize))){
+						httpcCloseContext(&context);
+						httpcExit();
+						fsExit();
+						return;
+					}
+					u8* buf = (u8*)malloc(contentsize);
+					memset(buf, 0, contentsize);
+
+					do {
+						if(R_FAILED(ret = httpcDownloadData(&context, buf, contentsize, &readSize))){
+							free(buf);
+							httpcCloseContext(&context);
+							httpcExit();
+							fsExit();
+							return;
+						}
+						FSFILE_Write(fileHandle, NULL, bytesWritten, buf, readSize, 0x10001);
+						bytesWritten += readSize;
+					} while (ret == (s32)HTTPC_RESULTCODE_DOWNLOADPENDING);
+
+					FSFILE_Close(fileHandle);
+					svcCloseHandle(fileHandle);
+
+					free(buf);
+				}
+			}else{
+				httpcCloseContext(&context);
+				httpcExit();
+				fsExit();
+				return;
+			}
+		}else{
+			httpcCloseContext(&context);
+			httpcExit();
+			fsExit();
+			return;
+		}
+	} while ((statuscode >= 301 && statuscode <= 303) || (statuscode >= 307 && statuscode <= 308));
+	httpcCloseContext(&context);
+
+	httpcExit();
+	fsExit();
+	
+	/// Show the confirmation text
+	///prompt_display("Confirmation", text, COLOR_TEXT, true, (titledb_info*) selected->data, NULL, downloadPlugin_confirmed);
 }
-
+/*
 void downloadPlugin_confirmed(ui_view* view, void* data, bool response) {
    info_display("Downloading plugin", "Press B to cancel.", false, data, startDownload, NULL);
 }
@@ -145,4 +225,4 @@ void startDownload(ui_view* view, void* data, float* progress, char* text){
 
 	prompt_display("Success", "Download finished.", COLOR_TEXT, false, NULL, NULL, NULL);
 	return;
-}
+}*/
