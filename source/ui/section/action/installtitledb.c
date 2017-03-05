@@ -44,8 +44,8 @@ void downloadPlugin(const char* text, const char* url, list_item* selected) {
 	
 	// DownloadFile wants file to be "/plugins/TID/name"
 	char tmp[0x100];
-	//snprintf(tmp, sizeof(tmp), "/plugins/%s/%s", titleID_s, titledbInfo->meta.shortDescription);
-	snprintf(tmp, sizeof(tmp), "/plugins/%s/%s", titleID_s, titledbInfo->meta.shortDescription);
+	//snprintf(tmp, sizeof(tmp), "/plugin/%s/%s", titleID_s, titledbInfo->meta.shortDescription);
+	snprintf(tmp, sizeof(tmp), "/plugin/%s/%s.plg", titleID_s, titledbInfo->meta.shortDescription);
 
 	// Store
 	///strncpy(file, tmp, sizeof(titleID));
@@ -55,7 +55,7 @@ void downloadPlugin(const char* text, const char* url, list_item* selected) {
 	// Download: TODO fix the code above this to make all UI WORKS!!. This is a TEMP solution!
 	
 	char* downloadURL = strdup(url);
-	//fsInit();
+	fsInit();
 	httpcInit(0x1000);
 	httpcContext context;
 	u32 statuscode=0;
@@ -86,7 +86,7 @@ void downloadPlugin(const char* text, const char* url, list_item* selected) {
 					long int bytesWritten = 0;
 
 					Handle fileHandle;
-					FS_Path filePath=fsMakePath(PATH_ASCII, tmp); // <- temp solution
+					FS_Path filePath=fsMakePath(PATH_ASCII, tmp);
 					FSUSER_OpenFileDirectly(&fileHandle, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""), filePath, FS_OPEN_CREATE | FS_OPEN_WRITE, 0x00000000);
 
 					if(R_FAILED(httpcGetDownloadSizeState(&context, NULL, &contentsize))){
