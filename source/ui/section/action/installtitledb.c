@@ -2,16 +2,19 @@
 
 #include <3ds.h>
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "action.h"
 #include "installtitledb.h"
 #include "../task/task.h"
 #include "../../list.h"
 #include "../../prompt.h"
+#include "../../ui.h"
 #include "../../../core/screen.h"
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <string.h>
-#include <stdlib.h>
+
 
 // Variables
 char file[0x100];
@@ -173,6 +176,7 @@ void internal_downloadPlugin_download(ui_view* view, void* data, float* progress
 	httpcExit();
 	fsExit();
 
+	ui_pop();
 	prompt_display("Success", "Download finished.", COLOR_TEXT, false, NULL, NULL, NULL);
 	return;
 }
