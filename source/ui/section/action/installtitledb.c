@@ -17,13 +17,29 @@
 char file[0x100];
 char pluginURL[0x100];
 
+/**
+ *  @brief Prepare the download and install
+ *  
+ *  @param [in] items    linked_list*
+ *  @param [in] selected list_item*
+ *  @return void
+ *  
+ *  @details This method will prepare the download and install the plugin
+ */
 void action_install_titledb(linked_list* items, list_item* selected) {
 	internal_downloadPlugin_start("Download the selected plugin from NTRDB?", selected);
 }
 
+/**
+ *  @brief Prepare the download path and URL
+ *  
+ *  @param [in] text     const char*	The text that will be shown in confirmation dialog.
+ *  @param [in] selected list_item*		The selected item as list_item*. Can be converted back to titledbInfo.
+ *  @return void
+ *  
+ *  @details This method will prepare the download path and the file URL.
+ */
 void internal_downloadPlugin_start(const char* text, list_item* selected) {
-	/** This method will prepare the download path and the download URL **/
-
 	// Read the plugin data first.
 	titledb_info* titledbInfo = (titledb_info*) selected->data;
 
@@ -50,16 +66,34 @@ void internal_downloadPlugin_start(const char* text, list_item* selected) {
 	prompt_display("Confirmation", text, COLOR_TEXT, true, titledbInfo, NULL, internal_downloadPlugin_confirmed);
 }
 
-
-void internal_downloadPlugin_confirmed(ui_view* view, void* data, bool response) {
+/**
+ *  @brief Download the file is user press A
+ *  
+ *  @param [in] view     ui_view*
+ *  @param [in] data     void*
+ *  @param [in] response bool
+ *  @return void
+ *  
+ *  @details This method will download only if user press A
+ */
+void internal_downloadPlugin_confirmed(ui_view* view, void* data, bool response) {	
 	if(response) {
 		info_display("Downloading plugin", "Press B to cancel.", false, data, internal_downloadPlugin_download, NULL);
 	}
 }
 
-
+/**
+ *  @brief This is the downloading method.
+ *  
+ *  @param [in] view     ui_view*
+ *  @param [in] data     void*
+ *  @param [in] progress float*
+ *  @param [in] text     char*
+ *  @return void
+ *  
+ *  @details This method will download the .plg in the desired location and return to plugin selection list.
+ */
 void internal_downloadPlugin_download(ui_view* view, void* data, float* progress, char* text){
-
 	char* downloadURL = strdup(pluginURL);
 	fsInit();
 	httpcInit(0x1000);
