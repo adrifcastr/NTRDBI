@@ -263,11 +263,10 @@ static void ui_draw_bottom(ui_view* ui) {
 }
 
 bool ui_update() {
-    ui_view* ui = NULL;
+    ui_view* ui = ui_top();
 
     hidScanInput();
 
-    ui = ui_top();
     if(ui != NULL && ui->update != NULL) {
         u32 bottomScreenTopBarHeight = 0;
         screen_get_texture_size(NULL, &bottomScreenTopBarHeight, TEXTURE_BOTTOM_SCREEN_TOP_BAR);
