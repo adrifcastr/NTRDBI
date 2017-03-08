@@ -76,7 +76,17 @@ static void task_populate_ntrdb_thread(void* arg) {
                                             } else if(strncmp(name, "name", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->meta.name, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.name));
                                             } else if(strncmp(name, "compatible", nameLen) == 0) {
-                                                strncpy(ntrdbInfo->meta.compatible, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.compatible));
+												char* compatibility = NULL; 
+												if(strcmp(subVal->u.string.ptr, "o3ds") == 0) {
+														compatibility = "Old 3DS / 2DS";
+												} else {
+													if (strcmp(subVal->u.string.ptr, "n3ds") == 0) {
+														compatibility = "New 3DS";
+													} else {
+														compatibility = "Universal";
+													}
+												}
+                                                strncpy(ntrdbInfo->meta.compatible, compatibility, sizeof(ntrdbInfo->meta.compatible));
                                             } else if(strncmp(name, "desc", nameLen) == 0) {
 												strncpy(ntrdbInfo->meta.description, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.description));
 											} else if(strncmp(name, "developer", nameLen) == 0) {

@@ -8,7 +8,7 @@ typedef struct list_item_s list_item;
 
 typedef struct meta_info_s {
     char name[0x100];
-	char compatible[0xA];
+	char compatible[0x10];
     char description[0x200];
     char developer[0x100];
     u32 texture;
