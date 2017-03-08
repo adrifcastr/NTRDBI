@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #include "action.h"
-#include "installtitledb.h"
+#include "installntrdb.h"
 #include "../task/task.h"
 #include "../../list.h"
 #include "../../prompt.h"
@@ -29,7 +29,7 @@ char pluginURL[0x100];
  *  
  *  @details This method will prepare the download and install the plugin
  */
-void action_install_titledb(linked_list* items, list_item* selected) {
+void action_install_ntrdb(linked_list* items, list_item* selected) {
 	internal_downloadPlugin_start("Download the selected plugin from NTRDB?", selected);
 }
 
@@ -37,20 +37,20 @@ void action_install_titledb(linked_list* items, list_item* selected) {
  *  @brief Prepare the download path and URL
  *  
  *  @param [in] text     const char*	The text that will be shown in confirmation dialog.
- *  @param [in] selected list_item*		The selected item as list_item*. Can be converted back to titledbInfo.
+ *  @param [in] selected list_item*		The selected item as list_item*. Can be converted back to ntrdbInfo.
  *  @return void
  *  
  *  @details This method will prepare the download path and the file URL.
  */
 void internal_downloadPlugin_start(const char* text, list_item* selected) {
 	// Read the plugin data first.
-	titledb_info* titledbInfo = (titledb_info*) selected->data;
+	ntrdb_info* ntrdbInfo = (ntrdb_info*) selected->data;
 
 	// Store the download URL.
-	snprintf(pluginURL, sizeof(pluginURL), "%s", titledbInfo->downloadURL);
+	snprintf(pluginURL, sizeof(pluginURL), "%s", ntrdbInfo->downloadURL);
 	
 	// Create the folder for plugin.
-	u64 titleID = titledbInfo->titleId;
+	u64 titleID = ntrdbInfo->titleId;
 	char titleID_s[] = {"0123456789ABCDEF"}; // dummy titleID. TODO check if this titleID folder is generated. if true, there is an error!
 	snprintf(titleID_s, sizeof(titleID_s), "%016llX", titleID);
 	
@@ -63,10 +63,10 @@ void internal_downloadPlugin_start(const char* text, list_item* selected) {
 	fsExit();
 	
 	// DownloadFile wants file to be "/plugin/TID/name.plg"
-	snprintf(file, sizeof(file), "/plugin/%s/%s.plg", titleID_s, titledbInfo->meta.shortDescription);
+	snprintf(file, sizeof(file), "/plugin/%s/%s.plg", titleID_s, ntrdbInfo->meta.name);
 
 	// Show the confirmation text
-	prompt_display("Confirmation", text, COLOR_TEXT, true, titledbInfo, NULL, internal_downloadPlugin_confirmed);
+	prompt_display("Confirmation", text, COLOR_TEXT, true, ntrdbInfo, NULL, internal_downloadPlugin_confirmed);
 }
 
 /**

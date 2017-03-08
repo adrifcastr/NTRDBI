@@ -3,7 +3,6 @@
 
 #include <3ds.h>
 
-#include "core/clipboard.h"
 #include "core/screen.h"
 #include "core/util.h"
 #include "ui/error.h"
@@ -102,8 +101,6 @@ void init() {
 }
 
 void cleanup() {
-    clipboard_clear();
-
     task_exit();
     ui_exit();
     screen_exit();

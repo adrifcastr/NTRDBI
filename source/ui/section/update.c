@@ -124,7 +124,7 @@ static bool update_error(void* data, u32 index, Result res) {
 	} else if(res == R_FBI_HTTP_RESPONSE_CODE) {
 		error_display(NULL, NULL, "Failed to update NTRDBI.\nHTTP server returned response code %d", updateData->responseCode);
 	} else {
-		error_display_res(NULL, NULL, res, "Failed to update NTI.");
+		error_display_res(NULL, NULL, res, "Failed to update NTRDBI.");
 	}
 
 	return false;

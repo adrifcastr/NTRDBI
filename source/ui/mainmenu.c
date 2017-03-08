@@ -10,7 +10,7 @@
 #include "../core/linkedlist.h"
 #include "../core/screen.h"
 
-static list_item titledb = {"NTRDB", COLOR_TEXT, titledb_open};
+static list_item ntrdb = {"NTRDB", COLOR_TEXT, ntrdb_open};
 static list_item update = {"Update", COLOR_TEXT, update_open};
 
 static void mainmenu_draw_top(ui_view* view, void* data, float x1, float y1, float x2, float y2, list_item* selected) {
@@ -37,7 +37,7 @@ static void mainmenu_update(ui_view* view, void* data, linked_list* items, list_
     }
 
     if(linked_list_size(items) == 0) {
-        linked_list_add(items, &titledb);
+        linked_list_add(items, &ntrdb);
         linked_list_add(items, &update);
     }
 }

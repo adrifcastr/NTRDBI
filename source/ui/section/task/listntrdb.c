@@ -15,7 +15,7 @@
 #include "../../../stb_image/stb_image.h"
 #include "ntrdb.h"
 
-static Result task_populate_titledb_download(u32* downloadSize, void* buffer, u32 maxSize, const char* url) {
+static Result task_populate_ntrdb_download(u32* downloadSize, void* buffer, u32 maxSize, const char* url) {
     Result res = 0;
 
     httpcContext context;
@@ -31,15 +31,15 @@ static Result task_populate_titledb_download(u32* downloadSize, void* buffer, u3
     return res;
 }
 
-static int task_populate_titledb_compare(void* userData, const void* p1, const void* p2) {
+static int task_populate_ntrdb_compare(void* userData, const void* p1, const void* p2) {
     list_item* info1 = (list_item*) p1;
     list_item* info2 = (list_item*) p2;
 
     return strncasecmp(info1->name, info2->name, LIST_ITEM_NAME_MAX);
 }
 
-static void task_populate_titledb_thread(void* arg) {
-    populate_titledb_data* data = (populate_titledb_data*) arg;
+static void task_populate_ntrdb_thread(void* arg) {
+    populate_ntrdb_data* data = (populate_ntrdb_data*) arg;
 
     Result res = 0;
 
@@ -50,7 +50,7 @@ static void task_populate_titledb_thread(void* arg) {
     char* text = (char*) calloc(sizeof(char), maxTextSize);
     if(text != NULL) {
         u32 textSize = 0;
-        if(R_SUCCEEDED(res = task_populate_titledb_download(&textSize, text, maxTextSize, NTR_API_URL))) {
+        if(R_SUCCEEDED(res = task_populate_ntrdb_download(&textSize, text, maxTextSize, NTR_API_URL))) {
             json_value* json = json_parse(text, textSize);
             if(json != NULL) {
                 if(json->type == json_array) {
@@ -64,39 +64,40 @@ static void task_populate_titledb_thread(void* arg) {
                         if(val->type == json_object) {
                             list_item* item = (list_item*) calloc(1, sizeof(list_item));
                             if(item != NULL) {
-                                titledb_info* titledbInfo = (titledb_info*) calloc(1, sizeof(titledb_info));
-                                if(titledbInfo != NULL) {
+                                ntrdb_info* ntrdbInfo = (ntrdb_info*) calloc(1, sizeof(ntrdb_info));
+                                if(ntrdbInfo != NULL) {
                                     for(u32 j = 0; j < val->u.object.length; j++) {
                                         char* name = val->u.object.values[j].name;
                                         u32 nameLen = val->u.object.values[j].name_length;
                                         json_value* subVal = val->u.object.values[j].value;
                                         if(subVal->type == json_string) {
                                             if(strncmp(name, "TitleID", nameLen) == 0) {
-                                                titledbInfo->titleId = strtoull(subVal->u.string.ptr, NULL, 16);
+                                                ntrdbInfo->titleId = strtoull(subVal->u.string.ptr, NULL, 16);
                                             } else if(strncmp(name, "name", nameLen) == 0) {
-                                                strncpy(titledbInfo->meta.shortDescription, subVal->u.string.ptr, sizeof(titledbInfo->meta.shortDescription));
+                                                strncpy(ntrdbInfo->meta.name, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.name));
                                             } else if(strncmp(name, "compatible", nameLen) == 0) {
-												//TODO: change meta_info data and clean task.h structs!
-                                                strncpy(titledbInfo->meta.longDescription, subVal->u.string.ptr, sizeof(titledbInfo->meta.longDescription));
-                                            } else if(strncmp(name, "developer", nameLen) == 0) {
-                                                strncpy(titledbInfo->meta.publisher, subVal->u.string.ptr, sizeof(titledbInfo->meta.publisher));
+                                                strncpy(ntrdbInfo->meta.compatible, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.compatible));
+                                            } else if(strncmp(name, "desc", nameLen) == 0) {
+												strncpy(ntrdbInfo->meta.description, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.description));
+											} else if(strncmp(name, "developer", nameLen) == 0) {
+                                                strncpy(ntrdbInfo->meta.developer, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.developer));
                                             } else if(strncmp(name, "version", nameLen) == 0) {
-                                                strncpy(titledbInfo->meta.version, subVal->u.string.ptr, sizeof(titledbInfo->meta.version));
+                                                strncpy(ntrdbInfo->meta.version, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.version));
 											} else if(strncmp(name, "plg", nameLen) == 0) {
-                                                strncpy(titledbInfo->downloadURL, subVal->u.string.ptr, sizeof(titledbInfo->downloadURL));
+                                                strncpy(ntrdbInfo->downloadURL, subVal->u.string.ptr, sizeof(ntrdbInfo->downloadURL));
 											}
                                         }
                                     }
 
-                                    if(strlen(titledbInfo->meta.shortDescription) > 0) {
-                                        strncpy(item->name, titledbInfo->meta.shortDescription, LIST_ITEM_NAME_MAX);
+                                    if(strlen(ntrdbInfo->meta.name) > 0) {
+                                        strncpy(item->name, ntrdbInfo->meta.name, LIST_ITEM_NAME_MAX);
                                     } else {
-                                        snprintf(item->name, LIST_ITEM_NAME_MAX, "%016llX", titledbInfo->titleId);
+                                        snprintf(item->name, LIST_ITEM_NAME_MAX, "%016llX", ntrdbInfo->titleId);
                                     }
 
                                     item->color = COLOR_NOT_INSTALLED; //TODO
 
-                                    item->data = titledbInfo;
+                                    item->data = ntrdbInfo;
 
                                     linked_list_add(&tempItems, item);
                                 } else {
@@ -123,7 +124,7 @@ static void task_populate_titledb_thread(void* arg) {
     }
 
     if(R_SUCCEEDED(res)) {
-        linked_list_sort(&tempItems, NULL, task_populate_titledb_compare);
+        linked_list_sort(&tempItems, NULL, task_populate_ntrdb_compare);
 
         linked_list_iter tempIter;
         linked_list_iterate(&tempItems, &tempIter);
@@ -142,16 +143,16 @@ static void task_populate_titledb_thread(void* arg) {
             }
 
             list_item* item = (list_item*) linked_list_iter_next(&iter);
-            titledb_info* titledbInfo = (titledb_info*) item->data;
+            ntrdb_info* ntrdbInfo = (ntrdb_info*) item->data;
 
             u32 maxPngSize = 128 * 1024;
             u8* png = (u8*) calloc(1, maxPngSize);
             if(png != NULL) {
                 char pngUrl[128];
-                snprintf(pngUrl, sizeof(pngUrl), "https://raw.githubusercontent.com/adrifcastr/NTRDB-Plugin-Host/master/images/%s.png", titledbInfo->meta.shortDescription);
+                snprintf(pngUrl, sizeof(pngUrl), "https://raw.githubusercontent.com/adrifcastr/NTRDB-Plugin-Host/master/images/%s.png", ntrdbInfo->meta.name);
 
                 u32 pngSize = 0;
-                if(R_SUCCEEDED(task_populate_titledb_download(&pngSize, png, maxPngSize, pngUrl))) {
+                if(R_SUCCEEDED(task_populate_ntrdb_download(&pngSize, png, maxPngSize, pngUrl))) {
                     int width;
                     int height;
                     int depth;
@@ -173,8 +174,8 @@ static void task_populate_titledb_thread(void* arg) {
                             }
                         }
 
-                        titledbInfo->meta.texture = screen_allocate_free_texture();
-                        screen_load_texture(titledbInfo->meta.texture, image, (u32) (width * height * 4), (u32) width, (u32) height, GPU_RGBA8, false);
+                        ntrdbInfo->meta.texture = screen_allocate_free_texture();
+                        screen_load_texture(ntrdbInfo->meta.texture, image, (u32) (width * height * 4), (u32) width, (u32) height, GPU_RGBA8, false);
 
                         free(image);
                     }
@@ -193,16 +194,16 @@ static void task_populate_titledb_thread(void* arg) {
     data->finished = true;
 }
 
-void task_free_titledb(list_item* item) {
+void task_free_ntrdb(list_item* item) {
     if(item == NULL) {
         return;
     }
 
     if(item->data != NULL) {
-        titledb_info* titledbInfo = (titledb_info*) item->data;
-        if(titledbInfo->meta.texture != 0) {
-            screen_unload_texture(titledbInfo->meta.texture);
-            titledbInfo->meta.texture = 0;
+        ntrdb_info* ntrdbInfo = (ntrdb_info*) item->data;
+        if(ntrdbInfo->meta.texture != 0) {
+            screen_unload_texture(ntrdbInfo->meta.texture);
+            ntrdbInfo->meta.texture = 0;
         }
 
         free(item->data);
@@ -211,7 +212,7 @@ void task_free_titledb(list_item* item) {
     free(item);
 }
 
-void task_clear_titledb(linked_list* items) {
+void task_clear_ntrdb(linked_list* items) {
     if(items == NULL) {
         return;
     }
@@ -223,16 +224,16 @@ void task_clear_titledb(linked_list* items) {
         list_item* item = (list_item*) linked_list_iter_next(&iter);
 
         linked_list_iter_remove(&iter);
-        task_free_titledb(item);
+        task_free_ntrdb(item);
     }
 }
 
-Result task_populate_titledb(populate_titledb_data* data) {
+Result task_populate_ntrdb(populate_ntrdb_data* data) {
     if(data == NULL || data->items == NULL) {
         return R_FBI_INVALID_ARGUMENT;
     }
 
-    task_clear_titledb(data->items);
+    task_clear_ntrdb(data->items);
 
     data->finished = false;
     data->result = 0;
@@ -240,7 +241,7 @@ Result task_populate_titledb(populate_titledb_data* data) {
 
     Result res = 0;
     if(R_SUCCEEDED(res = svcCreateEvent(&data->cancelEvent, RESET_STICKY))) {
-        if(threadCreate(task_populate_titledb_thread, data, 0x10000, 0x19, 1, true) == NULL) {
+        if(threadCreate(task_populate_ntrdb_thread, data, 0x10000, 0x19, 1, true) == NULL) {
             res = R_FBI_THREAD_CREATE_FAILED;
         }
     }

@@ -339,31 +339,6 @@ bool util_filter_tickets(void* data, const char* name, u32 attributes) {
     return (len >= 4 && strncasecmp(name + len - 4, ".tik", 4) == 0) || (len >= 5 && strncasecmp(name + len - 5, ".cetk", 5) == 0);
 }
 
-int util_compare_file_infos(void* userData, const void* p1, const void* p2) {
-    list_item* info1 = (list_item*) p1;
-    list_item* info2 = (list_item*) p2;
-
-    bool info1Base = strncmp(info1->name, "<current directory>", LIST_ITEM_NAME_MAX) == 0 || strncmp(info1->name, "<current file>", LIST_ITEM_NAME_MAX) == 0;
-    bool info2Base = strncmp(info2->name, "<current directory>", LIST_ITEM_NAME_MAX) == 0 || strncmp(info2->name, "<current file>", LIST_ITEM_NAME_MAX) == 0;
-
-    if(info1Base && !info2Base) {
-        return -1;
-    } else if(!info1Base && info2Base) {
-        return 1;
-    } else {
-        file_info* f1 = (file_info*) info1->data;
-        file_info* f2 = (file_info*) info2->data;
-
-        if((f1->attributes & FS_ATTRIBUTE_DIRECTORY) && !(f2->attributes & FS_ATTRIBUTE_DIRECTORY)) {
-            return -1;
-        } else if(!(f1->attributes & FS_ATTRIBUTE_DIRECTORY) && (f2->attributes & FS_ATTRIBUTE_DIRECTORY)) {
-            return 1;
-        } else {
-            return strncasecmp(f1->name, f2->name, FILE_NAME_MAX);
-        }
-    }
-}
-
 static char path_3dsx[FILE_PATH_MAX] = {'\0'};
 
 const char* util_get_3dsx_path() {
