@@ -88,7 +88,19 @@ static void task_populate_ntrdb_thread(void* arg) {
 												}
                                                 strncpy(ntrdbInfo->meta.compatible, compatibility, sizeof(ntrdbInfo->meta.compatible));
                                             } else if(strncmp(name, "desc", nameLen) == 0) {
-												strncpy(ntrdbInfo->meta.description, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.description));
+												char* desc = subVal->u.string.ptr;
+												int i;
+												for(i = 0; desc[i] != '\0'; i++) {
+													if((desc[i] == '\r') && (desc[i + 1] == '\n')) {
+														desc[i] = '\n';
+													}
+												}
+												for(i = 0; desc[i] != '\0'; i++) {
+													if((desc[i] == '\n') && (desc[i + 1] == '\n')) {
+														desc[i] = ' ';
+													}
+												}
+												strncpy(ntrdbInfo->meta.description, desc, sizeof(ntrdbInfo->meta.description));
 											} else if(strncmp(name, "developer", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->meta.developer, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.developer));
                                             } else if(strncmp(name, "version", nameLen) == 0) {
