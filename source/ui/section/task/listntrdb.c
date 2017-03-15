@@ -107,6 +107,8 @@ static void task_populate_ntrdb_thread(void* arg) {
                                                 strncpy(ntrdbInfo->meta.devsite, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.devsite));
                                             } else if(strncmp(name, "version", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->meta.version, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.version));
+											} else if(strncmp(name, "added", nameLen) == 0) {
+                                                strncpy(ntrdbInfo->meta.added, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.added));
 											} else if(strncmp(name, "plg", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->downloadURL, subVal->u.string.ptr, sizeof(ntrdbInfo->downloadURL));
 											}

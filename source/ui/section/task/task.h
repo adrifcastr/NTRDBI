@@ -12,6 +12,7 @@ typedef struct meta_info_s {
     char description[0x200];
     char developer[0x100];
 	char devsite[0x100];
+	char added[0x100];
     u32 texture;
 	char version[0xA];
 } meta_info;
