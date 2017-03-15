@@ -103,6 +103,8 @@ static void task_populate_ntrdb_thread(void* arg) {
 												strncpy(ntrdbInfo->meta.description, desc, sizeof(ntrdbInfo->meta.description));
 											} else if(strncmp(name, "developer", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->meta.developer, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.developer));
+                                            } else if(strncmp(name, "devsite", nameLen) == 0) {
+                                                strncpy(ntrdbInfo->meta.devsite, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.devsite));
                                             } else if(strncmp(name, "version", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->meta.version, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.version));
 											} else if(strncmp(name, "plg", nameLen) == 0) {
