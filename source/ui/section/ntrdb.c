@@ -14,7 +14,7 @@
 
 static list_item download = {"Download", COLOR_TEXT, action_install_ntrdb};
 static list_item description = {"Description", COLOR_TEXT, description_ntrdb_open};
-static list_item info = {"More info", COLOR_TEXT, NULL}; //TODO
+static list_item info = {"More info", COLOR_TEXT, moreinfo_ntrdb_open};
 
 typedef struct {
     populate_ntrdb_data populateData;
