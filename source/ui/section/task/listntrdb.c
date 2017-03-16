@@ -114,7 +114,12 @@ static void task_populate_ntrdb_thread(void* arg) {
 											} else if(strncmp(name, "pic", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->meta.pic, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.pic));
 											}
-                                        }
+                                        } else if(subVal->type == json_integer) {
+											if(strncmp(name, "id", nameLen) == 0) {
+                                                ntrdbInfo->meta.id = (u32) subVal->u.integer;
+											}
+										}
+
                                     }
 
                                     if(strlen(ntrdbInfo->meta.name) > 0) {
