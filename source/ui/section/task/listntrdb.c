@@ -182,7 +182,7 @@ static void task_populate_ntrdb_thread(void* arg) {
             u8* png = (u8*) calloc(1, maxPngSize);
             if(png != NULL) {
                 char pngUrl[128];
-                snprintf(pngUrl, sizeof(pngUrl), "https://raw.githubusercontent.com/adrifcastr/NTRDB-Plugin-Host/master/images/%s.png", ntrdbInfo->meta.name);
+                snprintf(pngUrl, sizeof(pngUrl), "https://raw.githubusercontent.com/adrifcastr/NTRDB-Plugin-Host/master/images/%lu.png", ntrdbInfo->meta.id);
 
                 u32 pngSize = 0;
                 if(R_SUCCEEDED(task_populate_ntrdb_download(&pngSize, png, maxPngSize, pngUrl))) {
