@@ -16,6 +16,7 @@ typedef struct meta_info_s {
     u32 texture;
 	char version[0xA];
 	char pic[0x100];
+	u32 pictexture;
 } meta_info;
 
 typedef struct ntrdb_info_s {
