@@ -111,6 +111,8 @@ static void task_populate_ntrdb_thread(void* arg) {
                                                 strncpy(ntrdbInfo->meta.added, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.added));
 											} else if(strncmp(name, "plg", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->downloadURL, subVal->u.string.ptr, sizeof(ntrdbInfo->downloadURL));
+											} else if(strncmp(name, "pic", nameLen) == 0) {
+                                                strncpy(ntrdbInfo->meta.pic, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.pic));
 											}
                                         }
                                     }
