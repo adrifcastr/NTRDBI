@@ -104,9 +104,7 @@ static void ntrdb_update(ui_view* view, void* data, linked_list* items, list_ite
     if(hidKeysDown() & KEY_B) {
         ui_pop();
         list_destroy(view);
-
         free(data);
-
         return;
     }
 	
@@ -119,7 +117,6 @@ static void ntrdb_update(ui_view* view, void* data, linked_list* items, list_ite
         action(actionData->items, actionData->selected);
 
         free(data);
-
         return;
     }
 	
