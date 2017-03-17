@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include "action.h"
+#include "moreinfo_qr.h"
 #include "moreinfontrdb.h"
 #include "../task/task.h"
 #include "../../list.h"
@@ -33,7 +34,7 @@ static char addedval[0x100] = "";
 static list_item namelist = {" ", COLOR_TEXT, NULL};
 static list_item compatibilitylist = {" ", COLOR_TEXT, NULL};
 static list_item developerlist = {" ", COLOR_TEXT, NULL};
-static list_item devsitelist = {" ", COLOR_TEXT, NULL};
+static list_item devsitelist = {" ", COLOR_TEXT, moreinfo_qr_ntrdb_open};
 static list_item addedlist = {" ", COLOR_TEXT, NULL};
 
 typedef struct {
