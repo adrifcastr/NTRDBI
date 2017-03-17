@@ -15,6 +15,7 @@
 static list_item download = {"Download and Install", COLOR_TEXT, action_install_ntrdb};
 static list_item description = {"Plugin description", COLOR_TEXT, description_ntrdb_open};
 static list_item info = {"Plugin info", COLOR_TEXT, plugininfo_ntrdb_open};
+static list_item qr = {"Show plugin website", COLOR_TEXT, qr_ntrdb_open};
 
 typedef struct {
     populate_ntrdb_data populateData;
@@ -60,6 +61,7 @@ static void ntrdb_action_update(ui_view* view, void* data, linked_list* items, l
         linked_list_add(items, &download);
 		linked_list_add(items, &description);
 		linked_list_add(items, &info);
+		linked_list_add(items, &qr);
     }
 }
 
