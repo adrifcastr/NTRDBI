@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include "action.h"
-#include "moreinfo_qr.h"
+#include "qr.h"
 #include "../task/task.h"
 #include "../../list.h"
 #include "../../prompt.h"
@@ -32,7 +32,7 @@ typedef struct {
 } ntrdb_action_data;
 
 
-void moreinfo_qr_ntrdb_open(linked_list* items, list_item* selected) {	
+void qr_ntrdb_open(linked_list* items, list_item* selected) {	
 	ntrdb_info* ntrdbInfo = (ntrdb_info*) selected->data;
 	ntrdb_action_data* data = (ntrdb_action_data*) calloc(1, sizeof(ntrdb_action_data));
 
@@ -60,8 +60,6 @@ void moreinfo_qr_ntrdb_open(linked_list* items, list_item* selected) {
 }
 
 static void ntrdb_update(ui_view* view, void* data, linked_list* items, list_item* selected, bool selectedTouched) {
-	ntrdb_action_data* actionData = (ntrdb_action_data*) data;
-
     if(hidKeysDown() & KEY_B) {
         ui_pop();
         list_destroy(view);

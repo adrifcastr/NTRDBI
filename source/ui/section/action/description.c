@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include "action.h"
-#include "descriptionntrdb.h"
+#include "description.h"
 #include "../task/task.h"
 #include "../../list.h"
 #include "../../prompt.h"

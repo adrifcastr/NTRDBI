@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #include "action.h"
-#include "installntrdb.h"
+#include "install.h"
 #include "../task/task.h"
 #include "../../list.h"
 #include "../../prompt.h"

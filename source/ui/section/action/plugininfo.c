@@ -9,8 +9,8 @@
 #include <stdlib.h>
 
 #include "action.h"
-#include "moreinfo_qr.h"
-#include "moreinfontrdb.h"
+#include "qr.h"
+#include "plugininfo.h"
 #include "../task/task.h"
 #include "../../list.h"
 #include "../../prompt.h"
@@ -34,7 +34,7 @@ static char addedval[0x100] = "";
 static list_item namelist = {" ", COLOR_TEXT, NULL};
 static list_item compatibilitylist = {" ", COLOR_TEXT, NULL};
 static list_item developerlist = {" ", COLOR_TEXT, NULL};
-static list_item devsitelist = {" ", COLOR_TEXT, moreinfo_qr_ntrdb_open};
+static list_item devsitelist = {" ", COLOR_TEXT, NULL};
 static list_item addedlist = {" ", COLOR_TEXT, NULL};
 
 typedef struct {
@@ -50,7 +50,7 @@ typedef struct {
 
 ntrdb_info* ntrdbInfo = NULL;
 
-void moreinfo_ntrdb_open(linked_list* items, list_item* selected) {
+void plugininfo_ntrdb_open(linked_list* items, list_item* selected) {
 
 	ntrdbInfo = (ntrdb_info*) selected->data;
 	ntrdb_action_data* data = (ntrdb_action_data*) calloc(1, sizeof(ntrdb_action_data));
