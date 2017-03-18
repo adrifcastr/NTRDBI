@@ -2,31 +2,34 @@ language: cpp
 os: linux
 dist: yakkety
 sudo: required
-
 before_install:
-  - wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
-  - export DEVKITPRO=/home/travis/devkitPro
-  - export DEVKITARM=${DEVKITPRO}/devkitARM
+- wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
+- export DEVKITPRO=/home/travis/devkitPro
+- export DEVKITARM=${DEVKITPRO}/devkitARM
 install:
-  - sudo perl devkitARMupdate.pl   
-  - wget --no-check-certificate https://codeload.github.com/fincs/citro3d/zip/master -O /tmp/citro3d.zip
-  - unzip /tmp/citro3d.zip
-  - cd citro3d-master
-  - make && sudo make install
-  - cd ..
-  - wget --no-check-certificate  https://raw.githubusercontent.com/libretro/RetroArch/master/ctr/tools/bannertool-linux
-  - chmod 777 bannertool-linux
-  - sudo mv bannertool-linux buildtools//3ds/bannertool-linux64
-  - wget --no-check-certificate  https://raw.githubusercontent.com/libretro/RetroArch/master/ctr/tools/makerom-linux
-  - chmod 777 makerom-linux
-  - sudo cp makerom-linux /usr/bin/makerom
-  - cd ..  
+- sudo perl devkitARMupdate.pl
+- wget --no-check-certificate https://codeload.github.com/fincs/citro3d/zip/master
+  -O /tmp/citro3d.zip
+- unzip /tmp/citro3d.zip
+- cd citro3d-master
+- make && sudo make install
+- cd ..
+- wget --no-check-certificate  https://raw.githubusercontent.com/libretro/RetroArch/master/ctr/tools/bannertool-linux
+- chmod 777 bannertool-linux
+- sudo mv bannertool-linux buildtools//3ds/bannertool-linux64
+- wget --no-check-certificate  https://raw.githubusercontent.com/libretro/RetroArch/master/ctr/tools/makerom-linux
+- chmod 777 makerom-linux
+- sudo cp makerom-linux /usr/bin/makerom
+- cd ..
 script:
-  - cd NTRDBI
-  - echo "Starting compilation"
-  - echo "Compiling NTRDBI"
-  - make
-  - echo "Compilation ended"
+- cd NTRDBI
+- echo "Starting compilation"
+- echo "Compiling NTRDBI"
+- make
+- echo "Compilation ended"
+after_success:
+- pip3 install requests
+- python3 nightly-server/send_build.py
 addons:
   apt:
     sources:
@@ -36,3 +39,6 @@ addons:
     - g++-4.9
     - libstdc++6
     - lftp
+env:
+  matrix:
+    secure: KJlpb9UF+LFV1Wk02C9+j39R3hP4B+pgnC0rfkK/KhET9+Se1RVqoabG9POl+tBBNp06Fet7KgGRRF0QzRjIxmV0Fluwfs12fxRqKJFxL/25fQ7Mvn82SWaqre1SBXxm5OREDOJQNMNP9MEv+ecbllxV23dtO1CDE7Bvhw3CwMt8OIWYMO/s4YV1fzMmsMfcFt2xLBzyg6tEQKOyucwpbu8JketmHcFi9Lcr11uO97gv/spmEICTVQzlwi8HTdNo9SZrXl/CXLEDKRF4xAe8nE5sjZ11pQEIxwrpVUzhDWlHsCGP9vaQof9MK8+h81eqc2GAvkJwBJJnDVOmNSitkPdScgnhK+d81y/muOCwbHnjmNQ16SxEHmXTmu5qZfDqhsujxqfYDNLcuKql1BSPAAs5vNwT0wYfEoRqtOFw5tslpXFDk/FMFvnD0sc9toKisy+sWHi1lIHO2pw0XVFe4AG6yCzFGsR4SQGuNoW7FQKcZeWJk1h0HlOYEP2WG5G/kB/T8svNuGQWZ1uW/LmabQxpQmuXeHK0hhBCtcDFejWYO5VLpRtPKWh+NaYFG2rJ3VAa61JMtLYvGMFXkVzuBXT9gBMiBMo8n357f1augqhUjZuBvLLtUkyrvkO7h3LJpG+TtbM/7Or2h/UggWOLBxOlFLs9QiE0cIzmTX83cB0=
