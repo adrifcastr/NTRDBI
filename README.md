@@ -3,6 +3,10 @@ NTRDB Downloader
 
 ## :construction: **WORK IN PROGRESS!!** :construction:
 
+## Download
+
+You can download latest version from [here](https://github.com/adrifcastr/NTRDBI/releases/latest). If you want to download nightlies builds _(experimental)_ click [here](https://github.com/adrifcastr/NTRDB-Plugin-Host/tree/NTRDBI-Nightlies-Server)
+
 ## **Credits:**
 
 - [@Steveice10](https://github.com/Steveice10) for FBI since this is a Mod of it _(and everyone else involved with FBI)_ 
