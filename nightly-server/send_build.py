@@ -16,7 +16,7 @@ try:
     def upload(file, filename):
         fileurl = github + "contents/%s"
         print("Uploading", file, "as", filename, end=" ")
-        reqjs = {"message": "[AUTO]NTRDBI Nightly build %s for %s" % (filename, version),
+        reqjs = {"message": "File:%s Commit:%s" % (filename, version),
                  "committer": {
                  "name": "Nightly Builds",
                  "email": "noreply@octonezd.pw"
