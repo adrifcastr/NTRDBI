@@ -6,7 +6,8 @@ try:
     import requests
     itemstopush = {
         "output/NTRDBI.zip": "NTRDBI.zip",
-        "output/3ds-arm/NTRDBI.cia": "latest.cia"
+        "output/3ds-arm/NTRDBI.cia": "latest.cia",
+        "nightly-server/update.json": "update.json"
     }
     version = str(
         check_output('git log -n 1 --pretty=format:"%h"', shell=True), 'utf-8')
