@@ -29,7 +29,7 @@ script:
   - make
   - echo "Compilation ended"
 after_success:
-  - python3 nightly-server/send_build.py
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then python3 nightly-server/send_build.py; fi'
 addons:
   apt:
     sources:
