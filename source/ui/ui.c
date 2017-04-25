@@ -352,9 +352,10 @@ void ui_draw_ntrdb_info(ui_view* view, void* data, float x1, float y1, float x2,
 
     char infoText[0x80];
 
-	u64 titleId = info->titleId;
+	char titleIds[0xAA];
+	snprintf(titleIds, sizeof(titleIds), "%s", info->titleId);
 	
-	if (titleId == 1000000000000000) {
+	if (strstr(titleIds, "No game")) {
 		snprintf(infoText, sizeof(infoText),
              "Title ID: %s\n"
              "Version: %s",
@@ -362,7 +363,7 @@ void ui_draw_ntrdb_info(ui_view* view, void* data, float x1, float y1, float x2,
 			 info->meta.version);
 	} else {
 		snprintf(infoText, sizeof(infoText),
-             "Title ID: %016llX\n"
+             "Title ID: %s\n"
              "Version: %s",
              info->titleId,
 			 info->meta.version);

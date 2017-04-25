@@ -39,23 +39,22 @@ void internal_downloadPlugin_start(const char* text, list_item* selected) {
 	}
 	
 	// Create the folder for plugin.
-	u64 titleID = ntrdbInfo->titleId;
-	char titleID_s[] = {"0123456789ABCDEF"}; // dummy titleID. TODO check if this titleID folder is generated. if true, there is an error! THIS IS DEBUG ONLY
-	if (titleID == 1000000000000000) 
-		snprintf(titleID_s, sizeof(titleID_s), "%s", "game");
-	else
-		snprintf(titleID_s, sizeof(titleID_s), "%016llX", titleID);
+	char titleIDs[16]; // DEBUG
+	snprintf(titleIDs, sizeof(titleIDs), "%s", ntrdbInfo->titleId);
+	
+	if (strstr(titleIDs, "No game")) 
+		snprintf(titleIDs, sizeof(titleIDs), "%s", "game");
 	
 	// if dir already exist, mkdir won't do anything
 	fsInit();
 	char dir[50];
-	snprintf(dir, sizeof(dir), "sdmc:/plugin/%s", titleID_s);
+	snprintf(dir, sizeof(dir), "sdmc:/plugin/%s", titleIDs);
 	dir[sizeof(dir) - 1] = '\0';
 	mkdir(dir, 0777);
 	fsExit();
 	
 	// DownloadFile wants file to be "/plugin/TID/name.plg"
-	snprintf(file, sizeof(file), "/plugin/%s/%s.plg", titleID_s, ntrdbInfo->meta.name);
+	snprintf(file, sizeof(file), "/plugin/%s/%s.plg", titleIDs, ntrdbInfo->meta.name);
 
 	// Show the confirmation text
 	prompt_display("Confirmation", text, COLOR_TEXT, true, ntrdbInfo, NULL, internal_downloadPlugin_confirmed);

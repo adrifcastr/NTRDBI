@@ -74,9 +74,9 @@ static void task_populate_ntrdb_thread(void* arg) {
                                             if(strncmp(name, "TitleID", nameLen) == 0) {
 												
 												if(strncmp(subVal->u.string.ptr, "Not game", 16) == 0)
-													ntrdbInfo->titleId = 1000000000000000;
+													strncpy(ntrdbInfo->titleId, "Not game", sizeof(ntrdbInfo->titleId));
 												else
-													ntrdbInfo->titleId = strtoull(subVal->u.string.ptr, NULL, 16);
+													strncpy(ntrdbInfo->titleId, subVal->u.string.ptr, sizeof(ntrdbInfo->titleId));
 												
                                             } else if(strncmp(name, "name", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->meta.name, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.name));
@@ -130,7 +130,7 @@ static void task_populate_ntrdb_thread(void* arg) {
                                     if(strlen(ntrdbInfo->meta.name) > 0) {
                                         strncpy(item->name, ntrdbInfo->meta.name, LIST_ITEM_NAME_MAX);
                                     } else {
-                                        snprintf(item->name, LIST_ITEM_NAME_MAX, "%016llX", ntrdbInfo->titleId);
+                                        snprintf(item->name, LIST_ITEM_NAME_MAX, "%s", ntrdbInfo->titleId);
                                     }
 
                                     item->color = COLOR_NOT_INSTALLED; //TODO

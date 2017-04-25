@@ -21,7 +21,7 @@ typedef struct meta_info_s {
 } meta_info;
 
 typedef struct ntrdb_info_s {
-    u64 titleId;
+    char titleId[0xAA];
     meta_info meta;
 	char downloadURL[0x100];
 } ntrdb_info;
