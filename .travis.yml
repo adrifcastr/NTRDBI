@@ -20,15 +20,16 @@ install:
   - chmod 777 makerom-linux
   - sudo cp makerom-linux /usr/bin/makerom
   - cd ..
+  - pip3 install requests
 script:
   - cd NTRDBI
+  - python3 nightly-server/prepare_nightly.py
   - echo "Starting compilation"
   - echo "Compiling NTRDBI"
   - make
   - echo "Compilation ended"
 after_success:
-  - pip3 install requests
-  - python3 nightly-server/send_build.py
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then python3 nightly-server/send_build.py; fi'
 addons:
   apt:
     sources:
