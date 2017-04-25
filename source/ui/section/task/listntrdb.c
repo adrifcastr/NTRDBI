@@ -72,7 +72,12 @@ static void task_populate_ntrdb_thread(void* arg) {
                                         json_value* subVal = val->u.object.values[j].value;
                                         if(subVal->type == json_string) {
                                             if(strncmp(name, "TitleID", nameLen) == 0) {
-                                                ntrdbInfo->titleId = strtoull(subVal->u.string.ptr, NULL, 16);
+												
+												if(strncmp(subVal->u.string.ptr, "Not game", 16) == 0)
+													ntrdbInfo->titleId = 1000000000000000;
+												else
+													ntrdbInfo->titleId = strtoull(subVal->u.string.ptr, NULL, 16);
+												
                                             } else if(strncmp(name, "name", nameLen) == 0) {
                                                 strncpy(ntrdbInfo->meta.name, subVal->u.string.ptr, sizeof(ntrdbInfo->meta.name));
                                             } else if(strncmp(name, "compatible", nameLen) == 0) {

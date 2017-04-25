@@ -33,8 +33,11 @@ void internal_downloadPlugin_start(const char* text, list_item* selected) {
 	
 	// Create the folder for plugin.
 	u64 titleID = ntrdbInfo->titleId;
-	char titleID_s[] = {"0123456789ABCDEF"}; // dummy titleID. TODO check if this titleID folder is generated. if true, there is an error!
-	snprintf(titleID_s, sizeof(titleID_s), "%016llX", titleID);
+	char titleID_s[] = {"0123456789ABCDEF"}; // dummy titleID. TODO check if this titleID folder is generated. if true, there is an error! THIS IS DEBUG ONLY
+	if (titleID == 1000000000000000) 
+		snprintf(titleID_s, sizeof(titleID_s), "%s", "game");
+	else
+		snprintf(titleID_s, sizeof(titleID_s), "%016llX", titleID);
 	
 	// if dir already exist, mkdir won't do anything
 	fsInit();

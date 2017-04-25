@@ -352,12 +352,21 @@ void ui_draw_ntrdb_info(ui_view* view, void* data, float x1, float y1, float x2,
 
     char infoText[0x80];
 
-    snprintf(infoText, sizeof(infoText),
+	u64 titleId = info->titleId;
+	
+	if (titleId == 1000000000000000) {
+		snprintf(infoText, sizeof(infoText),
+             "Title ID: %s\n"
+             "Version: %s",
+             "Not a plugin for games",
+			 info->meta.version);
+	} else {
+		snprintf(infoText, sizeof(infoText),
              "Title ID: %016llX\n"
              "Version: %s",
              info->titleId,
 			 info->meta.version);
-
+	}	
     float infoWidth;
     screen_get_string_size(&infoWidth, NULL, infoText, 0.5f, 0.5f);
 
