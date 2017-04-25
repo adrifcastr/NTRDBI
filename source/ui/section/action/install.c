@@ -29,7 +29,14 @@ void internal_downloadPlugin_start(const char* text, list_item* selected) {
 	ntrdb_info* ntrdbInfo = (ntrdb_info*) selected->data;
 
 	// Store the download URL.
-	snprintf(pluginURL, sizeof(pluginURL), "%s", ntrdbInfo->downloadURL);
+	char dwnULR[0x100];
+	snprintf(dwnULR, sizeof(dwnULR), "%s", ntrdbInfo->downloadURL);
+	
+	if (strstr(dwnULR, "github") && !strstr(dwnULR, "?raw=true")) {
+		snprintf(pluginURL, sizeof(pluginURL), "%s%s", dwnULR, "?raw=true");
+	} else {
+		snprintf(pluginURL, sizeof(pluginURL), "%s", dwnULR);
+	}
 	
 	// Create the folder for plugin.
 	u64 titleID = ntrdbInfo->titleId;
