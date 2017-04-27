@@ -47,6 +47,7 @@ void internal_downloadPlugin_start(const char* text, list_item* selected) {
 	
 	// if dir already exist, mkdir won't do anything
 	fsInit();
+	mkdir("sdmc:/plugin", 0777);
 	char dir[50];
 	snprintf(dir, sizeof(dir), "sdmc:/plugin/%s", titleIDs);
 	dir[sizeof(dir) - 1] = '\0';
